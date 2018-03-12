@@ -1,5 +1,6 @@
 package org.project36.qualopt.service;
 
+import org.project36.qualopt.domain.EmailScheduler;
 import org.apache.commons.lang3.CharEncoding;
 import org.project36.qualopt.domain.Study;
 import org.slf4j.Logger;
@@ -15,6 +16,21 @@ import javax.mail.internet.MimeMessage;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.quartz.SchedulerFactory;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+import org.quartz.DateBuilder.IntervalUnit;
+
+import static org.quartz.DateBuilder.futureDate;
+import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+
+
 @Service
 public class StudyService {
 
@@ -28,6 +44,7 @@ public class StudyService {
 
     @Async
     public void sendInvitationEmail(Study study){
+        int delay = 3;
         log.debug("Sending invitation email for study '{}'", study);
 
         String subject = study.getEmailSubject();
@@ -51,7 +68,18 @@ public class StudyService {
                 .toArray(Address[]::new));
             message.setSubject(subject, CharEncoding.UTF_8);
             message.setText(content, CharEncoding.UTF_8);
-            javaMailSender.send(message);
+            if (delay > 0){
+                try {
+                    scheduleEmailJob(message);
+                } catch (SchedulerException se){
+                    log.error("Failed to schedule email", se);
+                    se.printStackTrace();
+                }
+                
+            } else {
+                javaMailSender.send(message);
+            }
+            
             log.debug("Sent invitation email for study '{}'", study);
         } catch (MessagingException e) {
             log.error("Failed to send invitation email", e);
@@ -74,5 +102,31 @@ public class StudyService {
                     return new PasswordAuthentication("tt7199425@gmail.com", "testemail123");
                 }
             });
+    }
+
+    private void scheduleEmailJob(MimeMessage message) throws SchedulerException {
+        
+        SchedulerFactory schedFact = new StdSchedulerFactory();
+
+        Scheduler sched = schedFact.getScheduler();
+
+        sched.start();
+        JobDataMap messageMap = new JobDataMap();
+        messageMap.put("message", message);
+
+        // define the job and tie it to our HelloJob class
+        JobDetail job = newJob(EmailScheduler.class)
+            .withIdentity("myJob", "group1")
+            .usingJobData(messageMap)
+            .build();
+
+        // Trigger the job to run now, and then every 40 seconds
+        Trigger trigger = newTrigger().withIdentity("myTrigger", "group1")
+        .startAt(futureDate(1,IntervalUnit.MINUTE))
+            .forJob(job)
+            .build();
+
+        // Tell quartz to schedule the job using our trigger
+        sched.scheduleJob(job, trigger);
     }
 }
