@@ -224,6 +224,9 @@ bin/
 .cache-main
 .scala_dependencies
 .worksheet
+<<<<<<< HEAD
+src/main/resources/.h2.server.properties
+=======
 
 package-lock\.json
 
@@ -232,3 +235,4 @@ package\.json
 src/main/webapp/app/account/password-reset/init/password-reset-init\.component\.html
 
 src/main/webapp/app/account/register/register\.component\.html
+>>>>>>> 2d8095b78f6a4e6bdecc0dd33661f22efb262efb
