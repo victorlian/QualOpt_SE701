@@ -26,7 +26,15 @@
             </span>
         </dd>
     </dl>
-
+    <div class="radio">
+        <label><input type="radio" name="optradio"> Send Email Immediately</label>
+    </div>
+    <div class="radio">
+        <label><input type="radio" name="optradio" value="selectDate" id="thisOne"> Preset a date and time</label>
+    </div>
+    <div id="dateTimePicker" style="display: none;">
+        <p>Date: <input type="text" id="datepicker"></p>
+    </div>
     <button type="submit"
             (click)="previousState()"
             class="btn btn-info">
@@ -46,7 +54,7 @@
             class="btn btn-danger">
         <span class="fa fa-remove"></span>&nbsp;<span class="hidden-md-down">Delete</span>
     </button>
-
+    
     <button type="button"
             [routerLink]="['/', { outlets: { popup: 'study/'+ study.id + '/confirmSend'} }]"
             replaceUrl="true"
@@ -54,3 +62,19 @@
         <span class="fa fa-paper-plane"></span>&nbsp;<span> Send Invitation</span>
     </button>
 </div>
+<script>
+    $(document).ready(function() {
+        alert("eh");
+        $('#thisOne').change(function() {
+            alert("clicked");
+            if (this.value == 'selectDate') {
+                alert("clicked");
+                $('#DIV_password_reset').show();
+            }
+        });
+    });
+    $( function() {
+        $( "#dateTimePicker" ).datepicker();
+    } );
+</script>
+
