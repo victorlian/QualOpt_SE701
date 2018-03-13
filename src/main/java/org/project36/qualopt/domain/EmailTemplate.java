@@ -16,7 +16,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
- * A Email.
+ * An Email Template entity. 
+ * Email Templates include the system default and any user added ones. 
  */
 @Entity
 @Table(name = "email_template")
@@ -42,12 +43,12 @@ public class EmailTemplate implements Serializable {
     private String name;
     
     @Lob
-    @Column(name = "subject")
-    private String subject;
+    @Column(name = "email_subject")
+    private String emailSubject;
 
     @Lob
-    @Column(name = "body")
-    private String body;
+    @Column(name = "email_body")
+    private String emailBody;
 
     @Override
     public boolean equals(Object o) {
@@ -77,19 +78,19 @@ public class EmailTemplate implements Serializable {
     }
 
 	public String getSubject() {
-		return subject;
+		return emailSubject;
 	}
 
 	public void setSubject(String subject) {
-		this.subject = subject;
+		this.emailSubject = subject;
 	}
 
 	public String getBody() {
-		return body;
+		return emailBody;
 	}
 
 	public void setBody(String body) {
-		this.body = body;
+		this.emailBody = body;
 	}
 
 	public String getName() {
