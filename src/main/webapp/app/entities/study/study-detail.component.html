@@ -26,15 +26,44 @@
             </span>
         </dd>
     </dl>
-    <div class="radio">
-        <label><input type="radio" name="optradio"> Send Email Immediately</label>
+
+    <div class="wrap">
+        <form> 
+            <input id="sendNow" type="radio" name="content" ng-model="content" value="sendNow">
+            <label for="sendNow">Send Email Immediately</label>
+          
+            <br />
+            <input id="sendLater" type="radio" name="content" ng-model="content" value="sendLater">
+            <label for="sendLater">Preset Date and Time</label>
+        </form>
+        
+        <div class="wrapper">
+            <p ng-show="content == 'sendNow'"> </p>
+            <div ng-show="content == 'sendLater'">
+                    <input type="text" ng-model="date" jqdatepicker />
+                    <br/>
+                    {{ date }}
+                    var datePicker = angular.module('app', []);
+                    
+                    datePicker.directive('jqdatepicker', function () {
+                        return {
+                            restrict: 'A',
+                            require: 'ngModel',
+                             link: function (scope, element, attrs, ngModelCtrl) {
+                                element.datepicker({
+                                    dateFormat: 'DD, d  MM, yy',
+                                    onSelect: function (date) {
+                                        scope.date = date;
+                                        scope.$apply();
+                                    }
+                                });
+                            }
+                        };
+                    });
+            </div>
+        </div>
     </div>
-    <div class="radio">
-        <label><input type="radio" name="optradio" value="selectDate" id="thisOne"> Preset a date and time</label>
-    </div>
-    <div id="dateTimePicker" style="display: none;">
-        <p>Date: <input type="text" id="datepicker"></p>
-    </div>
+
     <button type="submit"
             (click)="previousState()"
             class="btn btn-info">
@@ -61,20 +90,6 @@
             class="btn btn-success">
         <span class="fa fa-paper-plane"></span>&nbsp;<span> Send Invitation</span>
     </button>
+    
 </div>
-<script>
-    $(document).ready(function() {
-        alert("eh");
-        $('#thisOne').change(function() {
-            alert("clicked");
-            if (this.value == 'selectDate') {
-                alert("clicked");
-                $('#DIV_password_reset').show();
-            }
-        });
-    });
-    $( function() {
-        $( "#dateTimePicker" ).datepicker();
-    } );
-</script>
 
