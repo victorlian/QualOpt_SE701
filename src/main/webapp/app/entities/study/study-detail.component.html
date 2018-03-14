@@ -26,40 +26,20 @@
             </span>
         </dd>
     </dl>
-
-    <div class="wrap">
-        <form> 
-            <input id="sendNow" type="radio" name="content" ng-model="content" value="sendNow">
-            <label for="sendNow">Send Email Immediately</label>
-          
-            <br />
-            <input id="sendLater" type="radio" name="content" ng-model="content" value="sendLater">
-            <label for="sendLater">Preset Date and Time</label>
-        </form>
-        
-        <div class="wrapper">
-            <p ng-show="content == 'sendNow'"> </p>
-            <div ng-show="content == 'sendLater'">
-                    <input type="text" ng-model="date" jqdatepicker />
-                    <br/>
-                    {{ date }}
-                    var datePicker = angular.module('app', []);
-                    
-                    datePicker.directive('jqdatepicker', function () {
-                        return {
-                            restrict: 'A',
-                            require: 'ngModel',
-                             link: function (scope, element, attrs, ngModelCtrl) {
-                                element.datepicker({
-                                    dateFormat: 'DD, d  MM, yy',
-                                    onSelect: function (date) {
-                                        scope.date = date;
-                                        scope.$apply();
-                                    }
-                                });
-                            }
-                        };
-                    });
+    <div ng-app="">
+        <div class="wrap">
+            <form> 
+                <input id="sendNow" type="radio" name="content" ng-model="content" value="sendNow">
+                <label for="sendNow">Send Email Immediately</label>
+            
+                <br />
+                <input id="sendLater" type="radio" name="content" ng-model="content" value="sendLater">
+                <label for="sendLater">Preset Date and Time</label>
+            </form>
+            
+            <div class="wrapper">
+                <p ng-show="content == 'sendNow'"> </p>
+                <p ng-show="content == 'sendLater'">Hello</p>
             </div>
         </div>
     </div>

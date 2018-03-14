@@ -28,7 +28,6 @@ import org.quartz.DateBuilder.IntervalUnit;
 import static org.quartz.DateBuilder.futureDate;
 import static org.quartz.TriggerBuilder.newTrigger;
 import static org.quartz.JobBuilder.newJob;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 
 @Service
