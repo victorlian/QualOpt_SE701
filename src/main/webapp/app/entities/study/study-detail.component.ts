@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
+import * as $ from "jquery"
 
 import { Study } from './study.model';
 import { StudyService } from './study.service';
@@ -11,10 +12,12 @@ import { StudyService } from './study.service';
     templateUrl: './study-detail.component.html'
 })
 export class StudyDetailComponent implements OnInit, OnDestroy {
-
+    
     study: Study;
     private subscription: Subscription;
     private eventSubscriber: Subscription;
+    private selectedLink: string="Male"; 
+    private presetSend: boolean=false;
 
     constructor(
         private eventManager: JhiEventManager,
@@ -22,6 +25,12 @@ export class StudyDetailComponent implements OnInit, OnDestroy {
         private studyService: StudyService,
         private route: ActivatedRoute
     ) {
+    }
+
+    onButtonClicked(currentStatus:boolean){
+        if (this.presetSend === currentStatus){
+            this.presetSend = !this.presetSend;
+        }
     }
 
     ngOnInit() {
