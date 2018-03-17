@@ -7,6 +7,7 @@ import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager, JhiAlertService, JhiDataUtils } from 'ng-jhipster';
 
 import { Study } from './study.model';
+import { EmailTemplate } from './study-emailTemplate.model' 
 import { StudyPopupService } from './study-popup.service';
 import { StudyService } from './study.service';
 import { User, UserService } from '../../shared';
@@ -26,6 +27,10 @@ export class StudyDialogComponent implements OnInit {
 
     participants: Participant[];
 
+    templates: EmailTemplate[];
+    selectedTemplate: EmailTemplate;
+
+
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
@@ -43,6 +48,11 @@ export class StudyDialogComponent implements OnInit {
             .subscribe((res: ResponseWrapper) => { this.users = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
         this.participantService.query()
             .subscribe((res: ResponseWrapper) => { this.participants = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
+        
+        let t1 = new EmailTemplate(1, 'hi', 'hiSub', 'hiBody');
+        let t2 = new EmailTemplate(2, 'e', 'eSub', 'eBodyz');
+        this.templates = new Array<EmailTemplate>(t1, t2);
+        this.selectedTemplate = t1;
     }
 
     byteSize(field) {
@@ -84,6 +94,12 @@ export class StudyDialogComponent implements OnInit {
     changeTab(tab) {
         document.getElementById(tab).click();
         console.log(document.getElementById(tab));
+    }
+
+    onTemplateChange(newValue: EmailTemplate) {
+        this.selectedTemplate = newValue;
+        (<HTMLInputElement>document.getElementById("field_emailSubject")).value = newValue.emailSubject;
+        (<HTMLTextAreaElement>document.getElementById("field_emailBody")).value = newValue.emailBody;
     }
 
     private subscribeToSaveResponse(result: Observable<Study>) {

@@ -1,4 +1,5 @@
 export * from './study.model';
+export * from './study-emailTemplate.model';
 export * from './study-popup.service';
 export * from './study.service';
 export * from './study-dialog.component';
