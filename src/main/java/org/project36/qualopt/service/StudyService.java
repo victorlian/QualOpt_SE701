@@ -42,8 +42,7 @@ public class StudyService {
     }
 
     @Async
-    public void sendInvitationEmail(Study study){
-        int delay = 3;
+    public void sendInvitationEmail(Study study, int delay){
         log.debug("Sending invitation email for study '{}'", study);
 
         String subject = study.getEmailSubject();

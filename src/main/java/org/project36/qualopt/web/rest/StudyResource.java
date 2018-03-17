@@ -167,10 +167,12 @@ public class StudyResource {
     @Timed
     public ResponseEntity sendStudy(@Valid @RequestBody Study study) {
         log.debug("REST request to send Study : {}", study);
+
         if (Objects.isNull(study)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        studyService.sendInvitationEmail(study);
+        log.debug("DELAYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY VALUEE");
+        studyService.sendInvitationEmail(study,0);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

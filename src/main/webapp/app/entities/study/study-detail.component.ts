@@ -16,8 +16,10 @@ export class StudyDetailComponent implements OnInit, OnDestroy {
     study: Study;
     private subscription: Subscription;
     private eventSubscriber: Subscription;
-    private selectedLink: string="Male"; 
     private presetSend: boolean=false;
+    private currentTimeStamp: string;
+    private delayString: string;
+    private delay: number;
 
     constructor(
         private eventManager: JhiEventManager,

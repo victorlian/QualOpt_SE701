@@ -25,39 +25,21 @@
             </span>
         </dd>
     </dl>
-    <!--
-    <div ng-app="app">
-        <div class="wrap">
-            <form> 
-                <input id="sendNow" type="radio" name="content" ng-model="content" value="sendNow">
-                <label for="sendNow">Send Email Immediately</label>
-            
-                <br />
-                <input id="sendLater" type="radio" name="content" ng-model="content" value="sendLater">
-                <label for="sendLater">Preset Date and Time</label>
-            </form>
-            
-            <div class="wrapper">
-                <p ng-show="content == 'sendNow'">uy </p>
-                <p ng-show="content == 'sendLater'">Hello</p>
-            </div>
-        </div>
-    </div>
-    -->
 
     <form>
-        <input type="radio" name="radioGroup" (click)="onButtonClicked(true)" > Send Email Immediately
+        <input id="sendNow" type="radio" name="radioGroup" (click)="onButtonClicked(true)" > Send Email Immediately
         </br>
-        <input type="radio" name="radioGroup" (click)="onButtonClicked(false)"> Preset Date and Time
+        <input id="sendLater" type="radio" name="radioGroup" (click)="onButtonClicked(false)"> Preset Date and Time
         <p></p>
     
         <div *ngIf="presetSend">
             <form>
                 <div>
-                    <label for="party">Choose a time to send the email</label>
-                    <input id="party" type="datetime-local" name="partydate"
-                            min="2017-06-01T08:30" max="2019-06-30T16:30"
-                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" required>
+                    <label for="setDate">Choose a time to send the email</label>
+                    <input id="setDate" type="datetime-local" name="sendMailDate" value={{currentTimeStamp}}
+                            min={{currentTimeStamp}} 
+                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" 
+                            [(ngModel)]="delayString" #ctrl="ngModel" required>
                     <span class="validity"></span>
                 </div>
                 <input type="hidden" id="timezone" name="timezone" value="+13:00">
@@ -82,7 +64,7 @@
             [routerLink]="['/', { outlets: { popup: 'study/'+ study.id + '/delete'} }]"
             replaceUrl="true"
             class="btn btn-danger">
-        <span class="fa fa-remove"></span>&nbsp;<span class="hidden-md-down">Delete</span>
+        <span class="fa fa-remove"></span>&nbsp;<span class="hidden-md-down"> Delete</span>
     </button>
     
     <button type="button"
