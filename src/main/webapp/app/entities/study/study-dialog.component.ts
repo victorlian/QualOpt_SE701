@@ -32,6 +32,7 @@ export class StudyDialogComponent implements OnInit {
 
     templates: EmailTemplate[];
     selectedTemplate: EmailTemplate;
+    saveTemplateName: string;
 
 
     constructor(
@@ -103,6 +104,14 @@ export class StudyDialogComponent implements OnInit {
         this.selectedTemplate = newValue;
         this.study.emailSubject = newValue.subject;
         this.study.emailBody = newValue.body;
+    }
+    
+    saveTemplate() {
+        console.log("save template called with name: " + this.saveTemplateName);
+    }
+
+    deleteTemplate() {
+        console.log("delete template called");
     }
 
     private subscribeToSaveResponse(result: Observable<Study>) {
