@@ -101,8 +101,8 @@ export class StudyDialogComponent implements OnInit {
 
     onTemplateChange(newValue: EmailTemplate) {
         this.selectedTemplate = newValue;
-        (<HTMLInputElement>document.getElementById("field_emailSubject")).value = newValue.subject;
-        (<HTMLTextAreaElement>document.getElementById("field_emailBody")).value = newValue.body;
+        this.study.emailSubject = newValue.subject;
+        this.study.emailBody = newValue.body;
     }
 
     private subscribeToSaveResponse(result: Observable<Study>) {
