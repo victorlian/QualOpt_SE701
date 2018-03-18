@@ -51,7 +51,7 @@ public class StudyServiceIntTest {
             .user(user)
             .emailSubject("testSubject")
             .emailBody("testContent")
-            .participants(ImmutableSet.of(new Participant().email("participant@email.com"))));
+            .participants(ImmutableSet.of(new Participant().email("participant@email.com"))),0);
         verify(javaMailSender).send((MimeMessage) messageCaptor.capture());
         MimeMessage message = (MimeMessage) messageCaptor.getValue();
         assertThat(message.getSubject()).isEqualTo("testSubject");

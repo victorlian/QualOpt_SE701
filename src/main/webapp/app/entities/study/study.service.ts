@@ -46,15 +46,8 @@ export class StudyService {
     }
 
     send(study: Study): Observable<any> {
-        var delay = this.getScheduledTimeAndDelay();
-        console.log("Before making post request: the delay is:" + delay);
-        let myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/json');    
-        let myParams = new URLSearchParams();
-        myParams.append('delay', delay);	
-
-        let options = new RequestOptions({ params: myParams });
-        return this.http.post(`${this.resourceUrl}/send`, study, options);
+        study.delayString = this.getScheduledTimeAndDelay();
+        return this.http.post(`${this.resourceUrl}/send`, study);
     }
 
     private convertResponse(res: Response): ResponseWrapper {
