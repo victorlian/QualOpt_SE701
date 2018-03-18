@@ -38,8 +38,8 @@ export class EmailTemplateService {
     //     });
     // }
 
-    getAll(): Observable<EmailTemplate[]> {
-        return this.http.get(`${this.resourceUrl}`).map((res: Response) => {
+    get(userLogin: string): Observable<EmailTemplate[]> {
+        return this.http.get(`${this.resourceUrl}/${userLogin}`).map((res: Response) => {
             return res.json();
         });
     }

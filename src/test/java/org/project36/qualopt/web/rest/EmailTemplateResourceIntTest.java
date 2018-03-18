@@ -1,17 +1,32 @@
 package org.project36.qualopt.web.rest;
 
-import org.project36.qualopt.QualOptApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.project36.qualopt.domain.Email;
-import org.project36.qualopt.domain.EmailTemplate;
-import org.project36.qualopt.repository.EmailRepository;
-import org.project36.qualopt.repository.EmailTemplateRepository;
-import org.project36.qualopt.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.project36.qualopt.QualOptApp;
+import org.project36.qualopt.domain.Email;
+import org.project36.qualopt.domain.EmailTemplate;
+import org.project36.qualopt.domain.User;
+import org.project36.qualopt.repository.EmailTemplateRepository;
+import org.project36.qualopt.repository.UserRepository;
+import org.project36.qualopt.web.rest.errors.ExceptionTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -21,15 +36,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Test class for the EmailResource REST controller.
@@ -42,6 +48,9 @@ public class EmailTemplateResourceIntTest {
 
     @Autowired
     private EmailTemplateRepository emailTemplateRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
@@ -58,7 +67,10 @@ public class EmailTemplateResourceIntTest {
     private MockMvc restEmailMockMvc;
 
     private EmailTemplate emailTemplate;
+    private User defaultUser ;
 
+    private static final String BADUSERLOGIN = "0";
+    
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -74,17 +86,40 @@ public class EmailTemplateResourceIntTest {
      *
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
+     * 
+     * Associate the email template to user 4;
      */
     public static EmailTemplate createEntity(EntityManager em) {
         EmailTemplate emailTemplate = new EmailTemplate();
         //Email template name cannot be null.
         emailTemplate.setName("testTemplate");
+        
         return emailTemplate;
+    }
+    
+    /**
+     * Create a default user for testing purpose.
+     * 
+     * The user has all of its mandatory field set.
+     * @param id
+     * @return
+     */
+    public static User createDefaultUser() {
+    	User user = new User();
+    	user.setLogin("AAAA");
+    	user.setPassword("$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K");
+    	user.setActivated(true);
+    	
+    	return user;
     }
 
     @Before
     public void initTest() {
         emailTemplate = createEntity(em);
+        
+    	User user = createDefaultUser();
+    	defaultUser = userRepository.saveAndFlush(user);
+        emailTemplate.setUser(defaultUser);
     }
 
     @Test
@@ -137,23 +172,32 @@ public class EmailTemplateResourceIntTest {
 
     @Test
     @Transactional
-    public void getEmailTemplate() throws Exception {
+    public void getEmailTemplateByUserId() throws Exception {
         // Initialize the database
         emailTemplateRepository.saveAndFlush(emailTemplate);
 
+        String userLogin = emailTemplateRepository.findAll().iterator().next().getUser().getLogin();
+        
         // Get the email template list
-        restEmailMockMvc.perform(get("/api/emailTemplates/{id}", emailTemplate.getId()))
+        restEmailMockMvc.perform(get("/api/emailTemplates/{userLogin}", userLogin))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(emailTemplate.getId().intValue()));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(emailTemplate.getId().intValue())));
+        
+        List<EmailTemplate> emailTemplateListForAnotherUser = emailTemplateRepository.findAllByUserLogin(BADUSERLOGIN);
+        List<EmailTemplate> emailTemplateListForOnlyUser = emailTemplateRepository.findAllByUserLogin(userLogin);
+        assertThat(emailTemplateListForAnotherUser).hasSize(0);
+        assertThat(emailTemplateListForOnlyUser).hasSize(1);
+        assertEquals(emailTemplateListForOnlyUser.get(0).getUser(), defaultUser);
     }
 
     @Test
     @Transactional
     public void getNonExistingEmail() throws Exception {
         // Get the email template list
-        restEmailMockMvc.perform(get("/api/emailTemplates/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+        restEmailMockMvc.perform(get("/api/emailTemplates/{userLogin}", BADUSERLOGIN))
+            .andExpect(status().isOk());
+        assertThat(emailTemplateRepository.findAllByUserLogin(BADUSERLOGIN)).hasSize(0);
     }
 
     @Test

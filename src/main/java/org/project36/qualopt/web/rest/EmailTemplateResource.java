@@ -83,7 +83,7 @@ public class EmailTemplateResource {
     }
 
     /**
-     * GET  /emailTemplates : get all the email templates.
+     * GET  /emailTemplates : get all the email templates
      *
      * @return the ResponseEntity with status 200 (OK) and the list of email templates in body
      */
@@ -95,17 +95,18 @@ public class EmailTemplateResource {
     }
 
     /**
-     * GET  /emailTemplates/:id : get the "id" email.
+     * GET  /emailTemplates/:id : get the email templates associated with the user.
      *
-     * @param id the id of the email template to retrieve
+     * @param userLogin the login of the user account
      * @return the ResponseEntity with status 200 (OK) and with body the email template, or with status 404 (Not Found)
      */
-    @GetMapping("/emailTemplates/{id}")
+    @GetMapping("/emailTemplates/{userLogin}")
     @Timed
-    public ResponseEntity<EmailTemplate> getEmail(@PathVariable Long id) {
-        log.debug("REST request to get Email Template: {}", id);
-        EmailTemplate emailTemplate = emailTemplateRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(emailTemplate));
+    public List<EmailTemplate> getEmail(@PathVariable String userLogin) {
+        log.debug("REST request to get Email Template with userId: {}", userLogin);
+        List<EmailTemplate> templates = emailTemplateRepository.findAllByUserLogin((userLogin));
+        log.debug("Retrieved " + templates.size() + " templates");
+        return templates;
     }
 
     /**

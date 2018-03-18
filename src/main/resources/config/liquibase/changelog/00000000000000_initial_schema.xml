@@ -105,6 +105,9 @@
             <column name="email_body" type="clob">
                 <constraints nullable="true" />
             </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
         </createTable>
         <!-- End of email template fix -->
         

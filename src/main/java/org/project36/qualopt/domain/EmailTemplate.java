@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -49,6 +50,9 @@ public class EmailTemplate implements Serializable {
     @Lob
     @Column(name = "email_body")
     private String emailBody;
+    
+    @ManyToOne
+    private User user;
 
     @Override
     public boolean equals(Object o) {
@@ -99,5 +103,13 @@ public class EmailTemplate implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 }

@@ -1,3 +1,5 @@
+import { User } from '../../../shared';
+
 export class EmailTemplate {
     constructor(
         public id?: number,
@@ -7,6 +9,7 @@ export class EmailTemplate {
         //So this must match. 
         public subject?: string,
         public body?: string,
+        public user?: User,
     ) {
     }
 }

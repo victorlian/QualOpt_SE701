@@ -12,9 +12,8 @@ import { EmailTemplateService } from './emailTemplate/emailTemplate.service'
 import { Study } from './study.model';
 import { StudyPopupService } from './study-popup.service';
 import { StudyService } from './study.service';
-import { User, UserService } from '../../shared';
+import { User, UserService, ResponseWrapper, Principal, Account } from '../../shared';
 import { Participant, ParticipantService } from '../participant';
-import { ResponseWrapper } from '../../shared';
 
 @Component({
     selector: 'jhi-study-dialog',
@@ -38,6 +37,8 @@ export class StudyDialogComponent implements OnInit {
     manageTemplateSubject: string;
     manageTemplateBody: string;
 
+    account: Account;
+
     constructor(
         public activeModal: NgbActiveModal,
         private dataUtils: JhiDataUtils,
@@ -46,7 +47,8 @@ export class StudyDialogComponent implements OnInit {
         private emailTemplateService: EmailTemplateService,
         private userService: UserService,
         private participantService: ParticipantService,
-        private eventManager: JhiEventManager
+        private eventManager: JhiEventManager,
+        private principal: Principal,
     ) {
     }
 
@@ -56,7 +58,12 @@ export class StudyDialogComponent implements OnInit {
             .subscribe((res: ResponseWrapper) => { this.users = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
         this.participantService.query()
             .subscribe((res: ResponseWrapper) => { this.participants = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
-        this.getAndUpdateEmailTemplate();
+
+        //retrieve account information of current user, use this to get template of current user.  
+        this.principal.identity().then((account) => {
+            this.account = account;
+            this.getAndUpdateEmailTemplate();
+        });
     }
 
     byteSize(field) {
@@ -100,7 +107,7 @@ export class StudyDialogComponent implements OnInit {
     }
 
     getAndUpdateEmailTemplate() {
-        this.emailTemplateService.getAll().subscribe((templates) => {
+        this.emailTemplateService.get(this.account.login).subscribe((templates) => {
             this.templates = templates;
 
             //adding the blank template at index 0.
