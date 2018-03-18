@@ -31,28 +31,11 @@ export class EmailTemplateService {
         return this.http.delete(`${this.resourceUrl}/${id}`);
     }
 
-
-    // find(id: number): Observable<Study> {
-    //     return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
-    //         return res.json();
-    //     });
-    // }
-
     get(userLogin: string): Observable<EmailTemplate[]> {
         return this.http.get(`${this.resourceUrl}/${userLogin}`).map((res: Response) => {
             return res.json();
         });
     }
-
-    // query(req?: any): Observable<ResponseWrapper> {
-    //     const options = createRequestOption(req);
-    //     return this.http.get(this.resourceUrl, options)
-    //         .map((res: Response) => this.convertResponse(res));
-    // }
-
-    // send(study: Study): Observable<any> {
-    //     return this.http.post(`${this.resourceUrl}/send`, study);
-    // }
 
     private convertResponse(res: Response): ResponseWrapper {
         const jsonResponse = res.json();

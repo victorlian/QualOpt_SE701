@@ -115,11 +115,14 @@ export class StudyDialogComponent implements OnInit {
         this.emailTemplateService.get(this.account.login).subscribe((templates) => {
             this.templates = templates;
 
-            //adding the blank template at index 0.
-            let blankTemplate = new EmailTemplate(0, "none", "", "");
+            //adding the blank template and default template at index 0, 1.
+            let blankTemplate = new EmailTemplate(-1, "none", "", "");
             this.templates.splice(0, 0, blankTemplate)
             this.selectedTemplate = this.templates[0];
             this.selectedManageTemplate = this.templates[0];
+            let defaultTemplate = new EmailTemplate
+                (0, "default", "Hi from QualOpt", "Dear participant: \n\n     We ask you kindly to join our study. \n\nYour QualOpt Team")
+            this.templates.splice(1, 0, defaultTemplate);
         });
     }
 
@@ -169,7 +172,8 @@ export class StudyDialogComponent implements OnInit {
             return;
         }
 
-        let updatedEmailTemplate = new EmailTemplate(this.selectedManageTemplate.id, this.selectedManageTemplate.name, this.manageTemplateSubject, this.manageTemplateBody, this.currentUser);
+        let updatedEmailTemplate = new EmailTemplate
+            (this.selectedManageTemplate.id, this.selectedManageTemplate.name, this.manageTemplateSubject, this.manageTemplateBody, this.currentUser);
 
         this.emailTemplateService.update(updatedEmailTemplate).subscribe((response) => {
             this.getAndUpdateEmailTemplate();
