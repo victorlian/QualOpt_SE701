@@ -38,6 +38,7 @@ export class StudyDialogComponent implements OnInit {
     manageTemplateBody: string;
 
     account: Account;
+    currentUser: User;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -59,10 +60,14 @@ export class StudyDialogComponent implements OnInit {
         this.participantService.query()
             .subscribe((res: ResponseWrapper) => { this.participants = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
 
-        //retrieve account information of current user, use this to get template of current user.  
+        //retrieve account information of current user
         this.principal.identity().then((account) => {
             this.account = account;
             this.getAndUpdateEmailTemplate();
+            //use the account information to get the current user
+            this.userService.find(account.login).subscribe((user) => {
+                this.currentUser = user;
+            });
         });
     }
 
@@ -150,7 +155,7 @@ export class StudyDialogComponent implements OnInit {
             this.updateTemplateOperationStatusMessage("A template must be saved with a name.");
             return;
         }
-        let newEmailTemplate = new EmailTemplate(null, this.saveTemplateName, this.manageTemplateSubject, this.manageTemplateBody);
+        let newEmailTemplate = new EmailTemplate(null, this.saveTemplateName, this.manageTemplateSubject, this.manageTemplateBody, this.currentUser);
         this.emailTemplateService.create(newEmailTemplate).subscribe((res: EmailTemplate) => {
             this.getAndUpdateEmailTemplate();
         });
@@ -164,7 +169,7 @@ export class StudyDialogComponent implements OnInit {
             return;
         }
 
-        let updatedEmailTemplate = new EmailTemplate(this.selectedManageTemplate.id, this.selectedManageTemplate.name, this.manageTemplateSubject, this.manageTemplateBody);
+        let updatedEmailTemplate = new EmailTemplate(this.selectedManageTemplate.id, this.selectedManageTemplate.name, this.manageTemplateSubject, this.manageTemplateBody, this.currentUser);
 
         this.emailTemplateService.update(updatedEmailTemplate).subscribe((response) => {
             this.getAndUpdateEmailTemplate();
