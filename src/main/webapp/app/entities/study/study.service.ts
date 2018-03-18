@@ -3,7 +3,6 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
 import { Study } from './study.model';
-import { EmailTemplate } from './emailTemplate/emailTemplate.model'
 import { ResponseWrapper, createRequestOption } from '../../shared';
 
 @Injectable()

@@ -16,7 +16,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -107,6 +106,7 @@ public class EmailTemplateResourceIntTest {
     public static User createDefaultUser() {
     	User user = new User();
     	user.setLogin("AAAA");
+    	//the password field is a hash of 60 characters. 
     	user.setPassword("$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K");
     	user.setActivated(true);
     	

@@ -18,7 +18,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * An Email Template entity. 
- * Email Templates include the system default and any user added ones. 
+ * 
+ * Email Templates are stored against a user.
+ * A user can have 0 to many email templates.
+ * 
+ * An email template contains: name, subject and body. 
  */
 @Entity
 @Table(name = "email_template")

@@ -1,24 +1,36 @@
 package org.project36.qualopt.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import org.project36.qualopt.domain.EmailTemplate;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
+import org.project36.qualopt.domain.EmailTemplate;
 import org.project36.qualopt.repository.EmailTemplateRepository;
 import org.project36.qualopt.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import java.util.List;
-import java.util.Optional;
+import com.codahale.metrics.annotation.Timed;
 
 /**
  * REST controller for managing Email Templates.
+ * 
+ * Supported operation:
+ * 
+ * POST: 		create an email template
+ * PUT:			update an email template
+ * GET:			gets all the email template
+ * GET/login:	gets all the email template for a specific user login
+ * DELETE:		delete an email template
  */
 @RestController
 @RequestMapping("/api")
