@@ -56,15 +56,7 @@ export class StudyDialogComponent implements OnInit {
             .subscribe((res: ResponseWrapper) => { this.users = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
         this.participantService.query()
             .subscribe((res: ResponseWrapper) => { this.participants = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
-        this.emailTemplateService.getAll().subscribe((templates) => {
-            this.templates = templates;
-
-            //adding the blank template at index 0.
-            let blankTemplate = new EmailTemplate(0, "none", "", "");
-            this.templates.splice(0, 0, blankTemplate)
-            this.selectedTemplate = this.templates[0];
-            this.selectedManageTemplate = this.templates[0];
-        });;
+        this.getAndUpdateEmailTemplate();
     }
 
     byteSize(field) {
@@ -107,6 +99,33 @@ export class StudyDialogComponent implements OnInit {
         document.getElementById(tab).click();
     }
 
+    getAndUpdateEmailTemplate() {
+        this.emailTemplateService.getAll().subscribe((templates) => {
+            this.templates = templates;
+
+            //adding the blank template at index 0.
+            let blankTemplate = new EmailTemplate(0, "none", "", "");
+            this.templates.splice(0, 0, blankTemplate)
+            this.selectedTemplate = this.templates[0];
+            this.selectedManageTemplate = this.templates[0];
+        });
+    }
+
+    clearSubjectAndBodyInManage() {
+        this.manageTemplateSubject = "";
+        this.manageTemplateBody = "";
+    }
+
+    updateTemplateOperationStatusMessage(message: string){
+        (<HTMLLabelElement>document.getElementById("statusMessage")).innerHTML = message;
+        //clear the message after 3 seconds.
+        setTimeout(function () {
+            if (<HTMLLabelElement>document.getElementById("statusMessage") !== null) {
+                (<HTMLLabelElement>document.getElementById("statusMessage")).innerHTML = "";
+            }
+        }, 3000);
+    }
+
     onTemplateChange(newValue: EmailTemplate) {
         this.selectedTemplate = newValue;
         this.study.emailSubject = newValue.subject;
@@ -120,15 +139,42 @@ export class StudyDialogComponent implements OnInit {
     }
     
     saveTemplate() {
-        console.log("save template called with name: " + this.saveTemplateName);
+        if (this.saveTemplateName === undefined || this.saveTemplateName.trim() === ""){
+            this.updateTemplateOperationStatusMessage("A template must be saved with a name.");
+            return;
+        }
+        let newEmailTemplate = new EmailTemplate(null, this.saveTemplateName, this.manageTemplateSubject, this.manageTemplateBody);
+        this.emailTemplateService.create(newEmailTemplate).subscribe((res: EmailTemplate) => {
+            this.getAndUpdateEmailTemplate();
+        });
+        this.saveTemplateName = undefined;
     }
 
     updateTemplate(){
-        console.log("update template called");
+        //Do not attempt to update non-existing template or the "none" template.
+        if (this.selectedManageTemplate.id < 1 || this.selectedManageTemplate.id === undefined){
+            this.updateTemplateOperationStatusMessage("Cannot update default or non-existing template.");
+            return;
+        }
+
+        let updatedEmailTemplate = new EmailTemplate(this.selectedManageTemplate.id, this.selectedManageTemplate.name, this.manageTemplateSubject, this.manageTemplateBody);
+
+        this.emailTemplateService.update(updatedEmailTemplate).subscribe((response) => {
+            this.getAndUpdateEmailTemplate();
+        });
     }
 
     deleteTemplate() {
-        console.log("delete template called");
+        //Do not attempt to delete non-existing template or the "none" template.
+        if (this.selectedManageTemplate.id < 1 || this.selectedManageTemplate.id === undefined){
+            this.updateTemplateOperationStatusMessage("Cannot delete default or non-existing template.");
+            return;
+        }
+
+        this.emailTemplateService.delete(this.selectedManageTemplate.id).subscribe((response) => {
+            this.getAndUpdateEmailTemplate();
+            this.clearSubjectAndBodyInManage();
+        });
     }
 
     private subscribeToSaveResponse(result: Observable<Study>) {

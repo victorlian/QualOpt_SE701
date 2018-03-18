@@ -12,19 +12,25 @@ export class EmailTemplateService {
 
     constructor(private http: Http) { }
 
-    // create(study: Study): Observable<Study> {
-    //     const copy = this.convert(study);
-    //     return this.http.post(this.resourceUrl, copy).map((res: Response) => {
-    //         return res.json();
-    //     });
-    // }
+    create(emailTemplate: EmailTemplate): Observable<EmailTemplate> {
+        const copy = this.convert(emailTemplate);
+        return this.http.post(this.resourceUrl, copy).map((res: Response) => {
+            return res.json();
+        });
+    }
 
-    // update(study: Study): Observable<Study> {
-    //     const copy = this.convert(study);
-    //     return this.http.put(this.resourceUrl, copy).map((res: Response) => {
-    //         return res.json();
-    //     });
-    // }
+    update(emailTemplate: EmailTemplate): Observable<EmailTemplate> {
+        const copy = this.convert(emailTemplate);
+        return this.http.put(this.resourceUrl, copy).map((res: Response) => {
+            return res.json();
+        });
+    }
+
+    
+    delete(id: number): Observable<Response> {
+        return this.http.delete(`${this.resourceUrl}/${id}`);
+    }
+
 
     // find(id: number): Observable<Study> {
     //     return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
@@ -42,10 +48,6 @@ export class EmailTemplateService {
     //     const options = createRequestOption(req);
     //     return this.http.get(this.resourceUrl, options)
     //         .map((res: Response) => this.convertResponse(res));
-    // }
-
-    // delete(id: number): Observable<Response> {
-    //     return this.http.delete(`${this.resourceUrl}/${id}`);
     // }
 
     // send(study: Study): Observable<any> {
