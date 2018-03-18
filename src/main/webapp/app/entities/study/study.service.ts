@@ -46,7 +46,7 @@ export class StudyService {
     }
 
     send(study: Study): Observable<any> {
-        study.delayString = this.getScheduledTimeAndDelay();
+        var delay = this.getScheduledTimeAndDelay();
         return this.http.post(`${this.resourceUrl}/send`, study);
     }
 
@@ -102,6 +102,4 @@ export class StudyService {
         var today = now.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
         return today;
     }
-
-
 }
