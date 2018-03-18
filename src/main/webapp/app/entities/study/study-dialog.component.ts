@@ -32,8 +32,11 @@ export class StudyDialogComponent implements OnInit {
 
     templates: EmailTemplate[];
     selectedTemplate: EmailTemplate;
-    saveTemplateName: string;
 
+    saveTemplateName: string;
+    selectedManageTemplate: EmailTemplate;
+    manageTemplateSubject: string;
+    manageTemplateBody: string;
 
     constructor(
         public activeModal: NgbActiveModal,
@@ -55,8 +58,13 @@ export class StudyDialogComponent implements OnInit {
             .subscribe((res: ResponseWrapper) => { this.participants = res.json; }, (res: ResponseWrapper) => this.onError(res.json));
         this.emailTemplateService.getAll().subscribe((templates) => {
             this.templates = templates;
+
+            //adding the blank template at index 0.
+            let blankTemplate = new EmailTemplate(0, "none", "", "");
+            this.templates.splice(0, 0, blankTemplate)
             this.selectedTemplate = this.templates[0];
-        });
+            this.selectedManageTemplate = this.templates[0];
+        });;
     }
 
     byteSize(field) {
@@ -97,7 +105,6 @@ export class StudyDialogComponent implements OnInit {
 
     changeTab(tab) {
         document.getElementById(tab).click();
-        console.log(document.getElementById(tab));
     }
 
     onTemplateChange(newValue: EmailTemplate) {
@@ -105,9 +112,19 @@ export class StudyDialogComponent implements OnInit {
         this.study.emailSubject = newValue.subject;
         this.study.emailBody = newValue.body;
     }
+
+    onManageTemplateChange(newValue: EmailTemplate){
+        this.selectedManageTemplate = newValue;
+        this.manageTemplateSubject = newValue.subject;
+        this.manageTemplateBody = newValue.body;
+    }
     
     saveTemplate() {
         console.log("save template called with name: " + this.saveTemplateName);
+    }
+
+    updateTemplate(){
+        console.log("update template called");
     }
 
     deleteTemplate() {
