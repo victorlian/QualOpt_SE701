@@ -32,6 +32,11 @@ public class Study implements Serializable {
     @Column(name = "description")
     private String description;
 
+    @NotNull
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.Inactive;
+
     @Lob
     @Column(name = "incentive")
     private String incentive;
@@ -76,6 +81,19 @@ public class Study implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Study status(Status status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getDescription() {
@@ -209,6 +227,7 @@ public class Study implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", incentive='" + getIncentive() + "'" +
+            ", status='" + getStatus() + "'" +
             ", emailSubject='" + getEmailSubject() + "'" +
             ", emailBody='" + getEmailBody() + "'" +
             "}";

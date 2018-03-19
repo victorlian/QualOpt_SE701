@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
 import * as $ from "jquery"
 
-import { Study } from './study.model';
+import {Status, Study} from './study.model';
 import { StudyService } from './study.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class StudyDetailComponent implements OnInit, OnDestroy {
     private currentTimeStamp: string;
     private delayString: string;
     private delay: number;
+    status = Status;
 
     constructor(
         private eventManager: JhiEventManager,
@@ -58,6 +59,16 @@ export class StudyDetailComponent implements OnInit, OnDestroy {
 
     previousState() {
         window.history.back();
+    }
+    // Changes the status of the study to active.
+    beginStudy() {
+        this.study.status = Status.ACTIVE;
+        this.studyService.update(this.study).subscribe();
+    }
+    // Changes the status of the study to Completed.
+    closeStudy() {
+        this.study.status = Status.COMPLETED;
+        this.studyService.update(this.study).subscribe();
     }
 
     ngOnDestroy() {
