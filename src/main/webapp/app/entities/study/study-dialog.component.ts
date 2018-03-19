@@ -154,10 +154,20 @@ export class StudyDialogComponent implements OnInit {
     }
     
     saveTemplate() {
+        //check for empty name
         if (this.saveTemplateName === undefined || this.saveTemplateName.trim() === ""){
             this.updateTemplateOperationStatusMessage("A template must be saved with a name.");
             return;
         }
+        
+        //check for existing name
+        let existingNames = this.templates.map(t => t.name);
+        if (existingNames.indexOf(this.saveTemplateName) > -1){
+            this.updateTemplateOperationStatusMessage("This template name has already been used.");
+            return;
+        }
+
+
         let newEmailTemplate = new EmailTemplate(null, this.saveTemplateName, this.manageTemplateSubject, this.manageTemplateBody, this.currentUser);
         this.emailTemplateService.create(newEmailTemplate).subscribe((res: EmailTemplate) => {
             this.getAndUpdateEmailTemplate();
