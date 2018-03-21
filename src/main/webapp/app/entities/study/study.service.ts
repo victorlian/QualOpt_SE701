@@ -7,6 +7,8 @@ import { Study } from './study.model';
 import { ResponseWrapper, createRequestOption } from '../../shared';
 
 import * as $ from "jquery";
+import { Params } from '@angular/router';
+import { Invitation } from '../participant/invitation-model';
 
 @Injectable()
 export class StudyService {
@@ -47,7 +49,12 @@ export class StudyService {
 
     send(study: Study): Observable<any> {
         var delay = this.getScheduledTimeAndDelay();
-        return this.http.post(`${this.resourceUrl}/send`, study);
+        // send an invitation
+        let invitation = new Invitation();
+        invitation.study = study;
+        invitation.delay = delay;
+
+        return this.http.post(`${this.resourceUrl}/send/`, invitation);
     }
 
     private convertResponse(res: Response): ResponseWrapper {
@@ -65,26 +72,26 @@ export class StudyService {
         // if user wants to send later:
         if ($('#sendLater').is(':checked')){
             var val = $('#setDate').val();
-            console.log("confirmSend() jQuery got setDate value of "+ val);
             if (val != null){
                 delay = this.calculateDelay(val);
             } 
         }
-        console.log("Therefore we set value of delay to: "+ delay);
         return delay.toString();
     }
 
     private calculateDelay(delayString: string): number {
         // calculate delay by getting difference between two dates
-        var diff = new Date(delayString).valueOf()  - new Date(this.getCurrentDateTime()).valueOf();
+        var diff = new Date(delayString).valueOf()  - new Date(StudyService.getCurrentDateTime()).valueOf();
         if (diff > 0){ 
+            // diff is a time difference in milliseconds.
             return diff;
         }
         // return 0 if difference between two dates is negative. 
         return 0;
     }
 
-    private getCurrentDateTime(): string {
+    // Globally accessible method to getCurrentDateTime in specific format.
+    public static getCurrentDateTime(): string {
         var now = new Date();
         var month = (now.getMonth() + 1).toString();
         var day = now.getDate().toString() ;

@@ -18,8 +18,7 @@ export class StudyDetailComponent implements OnInit, OnDestroy {
     private eventSubscriber: Subscription;
     private presetSend: boolean=false;
     private currentTimeStamp: string;
-    private delayString: string;
-    private delay: number;
+    private currentTimeZone: string;
     status = Status;
 
     constructor(
@@ -41,6 +40,15 @@ export class StudyDetailComponent implements OnInit, OnDestroy {
             this.load(params['id']);
         });
         this.registerChangeInStudies();
+        this.currentTimeStamp = StudyService.getCurrentDateTime();
+        this.currentTimeZone = this.getTimeZone();
+    }
+
+    // credit for function: https://stackoverflow.com/questions/1091372/getting-the-clients-timezone-in-javascript
+    // User: Mr_Green
+    getTimeZone(): string {
+        var offset = new Date().getTimezoneOffset(), o = Math.abs(offset);
+        return (offset < 0 ? "+" : "-") + ("00" + Math.floor(o / 60)).slice(-2) + ":" + ("00" + (o % 60)).slice(-2);
     }
 
     load(id) {

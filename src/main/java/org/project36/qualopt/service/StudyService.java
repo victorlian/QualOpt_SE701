@@ -13,6 +13,8 @@ import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import java.util.Date;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -68,7 +70,7 @@ public class StudyService {
             message.setText(content, CharEncoding.UTF_8);
             if (delay > 0){
                 try {
-                    scheduleEmailJob(message);
+                    scheduleEmailJob(message, delay);
                 } catch (SchedulerException se){
                     log.error("Failed to schedule email", se);
                     se.printStackTrace();
@@ -102,7 +104,7 @@ public class StudyService {
             });
     }
 
-    private void scheduleEmailJob(MimeMessage message) throws SchedulerException {
+    private void scheduleEmailJob(MimeMessage message, int delay) throws SchedulerException {
         
         SchedulerFactory schedFact = new StdSchedulerFactory();
 
@@ -120,7 +122,7 @@ public class StudyService {
 
         // Trigger the job to run now, and then every 40 seconds
         Trigger trigger = newTrigger().withIdentity("myTrigger", "group1")
-        .startAt(futureDate(1,IntervalUnit.MINUTE))
+        .startAt(futureDate(delay,IntervalUnit.SECOND))
             .forJob(job)
             .build();
 

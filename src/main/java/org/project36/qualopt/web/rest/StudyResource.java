@@ -3,6 +3,8 @@ package org.project36.qualopt.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+
+import org.project36.qualopt.domain.Invitation;
 import org.project36.qualopt.domain.Study;
 import org.project36.qualopt.domain.User;
 import org.project36.qualopt.repository.StudyRepository;
@@ -22,11 +24,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -165,13 +170,14 @@ public class StudyResource {
     @PostMapping(path = "/studies/send",
         produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     @Timed
-    public ResponseEntity sendStudy(@Valid @RequestBody Study study) {
-        log.debug("REST request to send Study : {}", study);
-		log.debug("Send study delay: " + study.getDelayString());
+    public ResponseEntity sendStudy(@Valid @RequestBody Invitation inv) {
+        Study study = inv.getStudy();
+        int delay = Integer.parseInt(inv.getDelay())/1000;
+        log.debug("REST request to send Study : {}"+ study + " with delay: "+ delay);
         if (Objects.isNull(study)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        studyService.sendInvitationEmail(study,0);
+        studyService.sendInvitationEmail(study,delay);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

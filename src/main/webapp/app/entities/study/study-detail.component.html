@@ -31,23 +31,20 @@
     </dl>
 
     <form>
-        <input id="sendNow" type="radio" name="radioGroup" (click)="onButtonClicked(true)" > Send Email Immediately
+        <input id="sendNow" type="radio" name="radioGroup" (click)="onButtonClicked(true)" checked> <strong>Send Email Immediately</strong>
         </br>
-        <input id="sendLater" type="radio" name="radioGroup" (click)="onButtonClicked(false)"> Preset Date and Time
+        <input id="sendLater" type="radio" name="radioGroup" (click)="onButtonClicked(false)"> <strong>Preset Date and Time</strong>
         <p></p>
     
         <div *ngIf="presetSend">
-            <form>
-                <div>
-                    <label for="setDate">Choose a time to send the email</label>
-                    <input id="setDate" type="datetime-local" name="sendMailDate" value={{currentTimeStamp}}
-                            min={{currentTimeStamp}} 
-                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" 
-                            [(ngModel)]="delayString" #ctrl="ngModel" required>
-                    <span class="validity"></span>
-                </div>
-                <input type="hidden" id="timezone" name="timezone" value="+13:00">
-            </form>
+            <label for="setDate"> <strong>Choose a time to send the email </strong></label>
+            </br>
+            <input id="setDate" type="datetime-local" name="sendMailDate" 
+                    min={{currentTimeStamp}} 
+                    pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" [(ngModel)]="currentTimeStamp" #ctrl="ngModel" required>                            
+            <span class="validity"></span>
+            <label for="timezone"> <strong> Time Zone: {{currentTimeZone}} </strong></label>
+            <p></p>
         </div>
     </form>
 
