@@ -15,7 +15,6 @@ import { StudyService } from './study.service';
 export class StudyConfirmDialogComponent {
 
     study: Study;
-
     constructor(
         private studyService: StudyService,
         public activeModal: NgbActiveModal,

@@ -10,6 +10,7 @@ export class Study implements BaseEntity {
         public emailSubject?: string,
         public emailBody?: any,
         public user?: User,
+        public delayString?: string,
         public participants?: BaseEntity[],
     ) {
     }

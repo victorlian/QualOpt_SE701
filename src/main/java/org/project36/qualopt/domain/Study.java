@@ -59,6 +59,9 @@ public class Study implements Serializable {
                inverseJoinColumns = @JoinColumn(name="participants_id", referencedColumnName="id"))
     private Set<Participant> participants = new HashSet<>();
 
+    @Transient
+    private String delayString;
+
     public Long getId() {
         return id;
     }
@@ -181,6 +184,20 @@ public class Study implements Serializable {
 
     public void setParticipants(Set<Participant> participants) {
         this.participants = participants;
+    }
+
+    /**
+     * @return the delayString
+     */
+    public String getDelayString() {
+        return delayString;
+    }
+
+    /**
+     * @param delayString the delayString to set
+     */
+    public void setDelayString(String delayString) {
+        this.delayString = delayString;
     }
 
     @Override
