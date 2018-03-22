@@ -322,7 +322,7 @@ public class StudyResourceIntTest {
     @Test
     @Transactional
     public void sendStudy() throws Exception {
-        doNothing().when(mockStudyService).sendInvitationEmail(any(Study.class));
+        doNothing().when(mockStudyService).sendInvitationEmail(any(Study.class),0);
         restStudyMockMvc.perform(post("/api/studies/send")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(study)))

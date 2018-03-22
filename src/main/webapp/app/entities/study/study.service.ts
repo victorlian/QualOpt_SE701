@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
+import {RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
 import { Study } from './study.model';
 import { ResponseWrapper, createRequestOption } from '../../shared';
+
+import * as $ from "jquery";
+import { Params } from '@angular/router';
+import { Invitation } from '../participant/invitation-model';
 
 @Injectable()
 export class StudyService {
@@ -43,7 +48,13 @@ export class StudyService {
     }
 
     send(study: Study): Observable<any> {
-        return this.http.post(`${this.resourceUrl}/send`, study);
+        var delay = this.getScheduledTimeAndDelay();
+        // send an invitation
+        let invitation = new Invitation();
+        invitation.study = study;
+        invitation.delay = delay;
+
+        return this.http.post(`${this.resourceUrl}/send/`, invitation);
     }
 
     private convertResponse(res: Response): ResponseWrapper {
@@ -54,5 +65,53 @@ export class StudyService {
     private convert(study: Study): Study {
         const copy: Study = Object.assign({}, study);
         return copy;
+    }
+    /*
+     * Method is used to retrieve desired preset date-time and 
+     * calculate the delay with which the email should be sent.
+     */
+    private getScheduledTimeAndDelay(): string{
+        var delay = 0;
+        // if user wants to send later:
+        if ($('#sendLater').is(':checked')){
+            var val = $('#setDate').val();
+            if (val != null){
+                delay = this.calculateDelay(val);
+            } 
+        }
+        return delay.toString();
+    }
+
+    private calculateDelay(delayString: string): number {
+        // calculate delay by getting difference between two dates
+        var diff = new Date(delayString).valueOf()  - new Date(StudyService.getCurrentDateTime()).valueOf();
+        if (diff > 0){ 
+            // diff is a time difference in milliseconds.
+            return diff;
+        }
+        // return 0 if difference between two dates is negative. 
+        return 0;
+    }
+
+    /*
+     * Globally accessible method to getCurrentDateTime in specific format.
+     */
+    public static getCurrentDateTime(): string {
+        var now = new Date();
+        var month = (now.getMonth() + 1).toString();
+        var day = now.getDate().toString() ;
+        var hours = now.getHours().toString();
+        var minutes = now.getMinutes().toString();
+        var time = 'T' + + ':' + now.getMinutes().toString();
+        if (+month < 10)
+            month = "0" + month;
+        if (+day < 10)
+            day = "0" + day;
+        if (+hours < 10)
+            hours = "0" + hours;
+        if (+minutes < 10)
+            minutes = "0" + minutes;    
+        var today = now.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+        return today;
     }
 }
