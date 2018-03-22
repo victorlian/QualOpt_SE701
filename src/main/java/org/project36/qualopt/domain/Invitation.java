@@ -3,7 +3,11 @@ package org.project36.qualopt.domain;
 import java.io.Serializable;
 
 import org.project36.qualopt.domain.Study;
-
+/**
+ * The invitation class is a domain class that is NOT MAPPED
+ * and is used to pass a study object along with the delay to
+ * the resource method.
+ */
 public class Invitation implements Serializable {
     private static final long serialVersionUID = 1L;
 

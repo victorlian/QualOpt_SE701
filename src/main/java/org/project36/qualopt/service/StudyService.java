@@ -14,7 +14,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -103,24 +102,25 @@ public class StudyService {
                 }
             });
     }
-
+    /**
+     * Method is used to create a schedule for a job: invitation email to be registered
+     * with the the Quartz Scheduler.
+     */
     private void scheduleEmailJob(MimeMessage message, int delay) throws SchedulerException {
         
         SchedulerFactory schedFact = new StdSchedulerFactory();
-
         Scheduler sched = schedFact.getScheduler();
 
         sched.start();
         JobDataMap messageMap = new JobDataMap();
         messageMap.put("message", message);
 
-        // define the job and tie it to our HelloJob class
         JobDetail job = newJob(EmailScheduler.class)
             .withIdentity("myJob", "group1")
             .usingJobData(messageMap)
             .build();
 
-        // Trigger the job to run now, and then every 40 seconds
+        // Trigger the job to run after a certain delay
         Trigger trigger = newTrigger().withIdentity("myTrigger", "group1")
         .startAt(futureDate(delay,IntervalUnit.SECOND))
             .forJob(job)

@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Rx';
 import { JhiEventManager , JhiDataUtils } from 'ng-jhipster';
-import * as $ from "jquery"
 
 import {Status, Study} from './study.model';
 import { StudyService } from './study.service';

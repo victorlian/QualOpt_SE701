@@ -66,7 +66,10 @@ export class StudyService {
         const copy: Study = Object.assign({}, study);
         return copy;
     }
-
+    /*
+     * Method is used to retrieve desired preset date-time and 
+     * calculate the delay with which the email should be sent.
+     */
     private getScheduledTimeAndDelay(): string{
         var delay = 0;
         // if user wants to send later:
@@ -90,7 +93,9 @@ export class StudyService {
         return 0;
     }
 
-    // Globally accessible method to getCurrentDateTime in specific format.
+    /*
+     * Globally accessible method to getCurrentDateTime in specific format.
+     */
     public static getCurrentDateTime(): string {
         var now = new Date();
         var month = (now.getMonth() + 1).toString();
