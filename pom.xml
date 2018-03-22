@@ -469,6 +469,12 @@
             <artifactId>spring-social-github</artifactId>
             <version>1.0.0.M4</version>
         </dependency>
+        <!-- Quartz Scheduling -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.3.0</version>
+        </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
     <build>

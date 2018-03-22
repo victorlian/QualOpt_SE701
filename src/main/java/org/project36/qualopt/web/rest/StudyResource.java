@@ -3,12 +3,13 @@ package org.project36.qualopt.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+
+import org.project36.qualopt.domain.Invitation;
 import org.project36.qualopt.domain.Study;
 import org.project36.qualopt.domain.User;
 import org.project36.qualopt.repository.StudyRepository;
 import org.project36.qualopt.repository.UserRepository;
 import org.project36.qualopt.service.StudyService;
-import org.project36.qualopt.service.dto.StudyInfoDTO;
 import org.project36.qualopt.web.rest.util.HeaderUtil;
 import org.project36.qualopt.web.rest.util.PaginationUtil;
 import org.slf4j.Logger;
@@ -28,8 +29,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * REST controller for managing Study.
@@ -129,25 +130,6 @@ public class StudyResource {
     }
 
     /**
-     * GET  /studies/info/:id : get the study info with the specified id.
-     *
-     * @param id the id of the study, from which the study info will be retrieved
-     * @return the ResponseEntity with status 200 (OK) and with body the study, or with status 404 (Not Found)
-     */
-    @GetMapping("/studies/{id}/info")
-    @Timed
-    public ResponseEntity<StudyInfoDTO> getStudyInfo(@PathVariable Long id) {
-        log.debug("REST request to get study info: {}", id);
-        Study study = studyRepository.findOneWithEagerRelationships(id);
-        if(study==null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        StudyInfoDTO studyInfo = new StudyInfoDTO(study);
-        return new ResponseEntity<>(studyInfo, HttpStatus.OK);
-    }
-
-    /**
      * DELETE  /studies/:id : delete the "id" study.
      *
      * @param id the id of the study to delete
@@ -157,7 +139,7 @@ public class StudyResource {
     @Timed
     public ResponseEntity<Void> deleteStudy(@PathVariable Long id) {
         log.debug("REST request to delete Study : {}", id);
-        studyRepository.deleteById(id);
+        studyRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -185,15 +167,14 @@ public class StudyResource {
     @PostMapping(path = "/studies/send",
         produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     @Timed
-    public ResponseEntity<Object> sendStudy(@Valid @RequestBody Study study) throws URISyntaxException {
-        log.debug("REST request to send Study : {}", study);
-        if (study == null){
+    public ResponseEntity sendStudy(@Valid @RequestBody Invitation inv) {
+        Study study = inv.getStudy();
+        int delay = Integer.parseInt(inv.getDelay())/1000;
+        log.debug("REST request to send Study : {}"+ study + " with delay: "+ delay);
+        if (Objects.isNull(study)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Set<String> bouncedMail = studyService.sendInvitationEmail(study);
-        return ResponseEntity
-            .created(new URI("/api/studies/send"))
-            .header("Sent: " + study.getName())
-            .body(bouncedMail);
+        studyService.sendInvitationEmail(study,delay);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
