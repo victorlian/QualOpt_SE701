@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.project36.qualopt.QualOptApp;
+import org.project36.qualopt.domain.Invitation;
 import org.project36.qualopt.domain.Study;
 import org.project36.qualopt.repository.StudyRepository;
 import org.project36.qualopt.repository.UserRepository;
@@ -74,6 +75,8 @@ public class StudyResourceIntTest {
 
     private Study study;
 
+    private Invitation inv;
+
     @Mock
     private StudyService mockStudyService;
 
@@ -103,9 +106,20 @@ public class StudyResourceIntTest {
         return study;
     }
 
+    /**
+     * Create an Invitation object.
+     */
+    public static Invitation createInvitation(EntityManager em, Study study) {
+        Invitation inv = new Invitation();
+        inv.setStudy(study);
+        inv.setDelay(0);
+        return inv;
+    }
+
     @Before
     public void initTest() {
         study = createEntity(em);
+        inv = createInvitation(em, study);
     }
 
     @Test
@@ -322,7 +336,7 @@ public class StudyResourceIntTest {
     public void sendStudy() throws Exception {
         restStudyMockMvc.perform(post("/api/studies/send")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(study)))
+            .content(TestUtil.convertObjectToJsonBytes(inv)))
             .andExpect(status().isCreated())
             .andExpect(content().string(""));
     }
