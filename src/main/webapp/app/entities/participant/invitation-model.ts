@@ -6,7 +6,7 @@ import { Study } from "../study";
 export class Invitation {
     constructor(
         public study?: Study,
-        public delay?: string
+        public delay?: number
     ) {
     }
 }

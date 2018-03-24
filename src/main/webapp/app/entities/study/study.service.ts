@@ -3,7 +3,7 @@ import { Http, Response } from '@angular/http';
 import {RequestOptions} from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
-import { Study } from './study.model';
+import { Study, StudyInfo } from './study.model';
 import { ResponseWrapper, createRequestOption } from '../../shared';
 
 import * as $ from "jquery";
@@ -37,6 +37,12 @@ export class StudyService {
         });
     }
 
+    getStudyInfo(id: number): Observable<StudyInfo> {
+        return this.http.get(`${this.resourceUrl}/${id}/info`).map((res: Response) => {
+            return res.json();
+        });
+    }
+
     query(req?: any): Observable<ResponseWrapper> {
         const options = createRequestOption(req);
         return this.http.get(this.resourceUrl, options)
@@ -47,14 +53,16 @@ export class StudyService {
         return this.http.delete(`${this.resourceUrl}/${id}`);
     }
 
-    send(study: Study): Observable<any> {
-        var delay = this.getScheduledTimeAndDelay();
+    send(study: Study): Observable<String[]> {
+        let delay = this.getScheduledTimeAndDelay();
         // send an invitation
         let invitation = new Invitation();
         invitation.study = study;
         invitation.delay = delay;
-
-        return this.http.post(`${this.resourceUrl}/send/`, invitation);
+        return this.http.post(`${this.resourceUrl}/send`, invitation)
+            .map((res: Response) => {
+                return res.json();
+        });
     }
 
     private convertResponse(res: Response): ResponseWrapper {
@@ -70,21 +78,21 @@ export class StudyService {
      * Method is used to retrieve desired preset date-time and 
      * calculate the delay with which the email should be sent.
      */
-    private getScheduledTimeAndDelay(): string{
-        var delay = 0;
+    private getScheduledTimeAndDelay(): number{
+        let delay = 0;
         // if user wants to send later:
         if ($('#sendLater').is(':checked')){
-            var val = $('#setDate').val();
+            let val = $('#setDate').val();
             if (val != null){
                 delay = this.calculateDelay(val);
             } 
         }
-        return delay.toString();
+        return delay;
     }
 
     private calculateDelay(delayString: string): number {
         // calculate delay by getting difference between two dates
-        var diff = new Date(delayString).valueOf()  - new Date(StudyService.getCurrentDateTime()).valueOf();
+        let diff = new Date(delayString).valueOf()  - new Date(StudyService.getCurrentDateTime()).valueOf();
         if (diff > 0){ 
             // diff is a time difference in milliseconds.
             return diff;
@@ -97,12 +105,12 @@ export class StudyService {
      * Globally accessible method to getCurrentDateTime in specific format.
      */
     public static getCurrentDateTime(): string {
-        var now = new Date();
-        var month = (now.getMonth() + 1).toString();
-        var day = now.getDate().toString() ;
-        var hours = now.getHours().toString();
-        var minutes = now.getMinutes().toString();
-        var time = 'T' + + ':' + now.getMinutes().toString();
+        let now = new Date();
+        let month = (now.getMonth() + 1).toString();
+        let day = now.getDate().toString() ;
+        let hours = now.getHours().toString();
+        let minutes = now.getMinutes().toString();
+        let time = 'T' + + ':' + now.getMinutes().toString();
         if (+month < 10)
             month = "0" + month;
         if (+day < 10)
@@ -111,7 +119,7 @@ export class StudyService {
             hours = "0" + hours;
         if (+minutes < 10)
             minutes = "0" + minutes;    
-        var today = now.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+        let today = now.getFullYear() + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
         return today;
     }
 }

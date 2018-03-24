@@ -12,7 +12,7 @@ public class Invitation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Study study;
-    private String delay;
+    private int delay;
 
     /**
      * @return the study
@@ -30,13 +30,13 @@ public class Invitation implements Serializable {
     /**
      * @return the delay
      */
-    public String getDelay() {
+    public int getDelay() {
         return delay;
     }
     /**
      * @param delay the delay to set
      */
-    public void setDelay(String delay) {
+    public void setDelay(int delay) {
         this.delay = delay;
     }
     

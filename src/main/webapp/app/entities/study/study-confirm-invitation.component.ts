@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { NgbActiveModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiEventManager } from 'ng-jhipster';
+import { NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 
 import { Study } from './study.model';
 import { StudyPopupService } from './study-popup.service';
@@ -17,9 +16,7 @@ export class StudyConfirmDialogComponent {
     study: Study;
     constructor(
         private studyService: StudyService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
+        public activeModal: NgbActiveModal) {
     }
 
     clear() {
@@ -27,7 +24,8 @@ export class StudyConfirmDialogComponent {
     }
 
     confirmSend() {
-        this.studyService.send(this.study).subscribe();
+        console.log('Sending invitation email ...');
+        this.studyService.send(this.study).subscribe(res => console.log(`Bounced: ${res}`));
         this.activeModal.dismiss('sent');
     }
 }
