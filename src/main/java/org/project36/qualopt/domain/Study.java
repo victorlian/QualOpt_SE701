@@ -38,8 +38,12 @@ public class Study implements Serializable {
     private Status status = Status.Inactive;
 
     @Lob
-    @Column(name = "incentive")
-    private String incentive;
+    @Column(name = "incentive_type")
+    private IncentiveType incentiveType;
+
+    @Lob
+    @Column(name = "incentive_detail")
+    private String incentiveDetail;
 
     @NotNull
     @Column(name = "email_subject", nullable = false)
@@ -54,6 +58,9 @@ public class Study implements Serializable {
 
     @ManyToOne
     private User user;
+
+    @Column(name = "bounced_mail")
+    private String bouncedMail;
 
     @ManyToMany
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -113,17 +120,30 @@ public class Study implements Serializable {
         this.description = description;
     }
 
-    public String getIncentive() {
-        return incentive;
+    public IncentiveType getIncentiveType() {
+        return incentiveType;
     }
 
-    public Study incentive(String incentive) {
-        this.incentive = incentive;
+    public Study incentiveType(IncentiveType incentiveType) {
+        this.incentiveType = incentiveType;
         return this;
     }
 
-    public void setIncentive(String incentive) {
-        this.incentive = incentive;
+    public void setIncentiveType(IncentiveType incentiveType) {
+        this.incentiveType = incentiveType;
+    }
+
+    public String getIncentiveDetail() {
+        return incentiveDetail;
+    }
+
+    public Study incentiveDetail(String incentiveDetail) {
+        this.incentiveDetail = incentiveDetail;
+        return this;
+    }
+
+    public void setIncentiveDetail(String incentiveDetail) {
+        this.incentiveDetail = incentiveDetail;
     }
 
     public String getEmailSubject() {
@@ -226,6 +246,14 @@ public class Study implements Serializable {
         this.documents = documents;
     }
 
+    public String getBouncedMail() {
+        return bouncedMail;
+    }
+
+    public void setBouncedMail(String bouncedMail) {
+        this.bouncedMail = bouncedMail;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -252,11 +280,12 @@ public class Study implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
-            ", incentive='" + getIncentive() + "'" +
+            ", incentiveType='" + getIncentiveType() + "'" +
+            ", incentiveDetails='" + getIncentiveDetail() + "'" +
             ", status='" + getStatus() + "'" +
-            ", faq='" + getFaq() + "'" +
             ", emailSubject='" + getEmailSubject() + "'" +
             ", emailBody='" + getEmailBody() + "'" +
+            ", bouncedMail='" + getBouncedMail() + "'" +
             "}";
     }
 }
