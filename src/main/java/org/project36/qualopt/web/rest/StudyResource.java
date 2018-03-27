@@ -159,7 +159,7 @@ public class StudyResource {
     @Timed
     public ResponseEntity<Void> deleteStudy(@PathVariable Long id) {
         log.debug("REST request to delete Study : {}", id);
-        studyRepository.delete(id);
+        studyRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 
@@ -187,10 +187,11 @@ public class StudyResource {
     @PostMapping(path = "/studies/send",
         produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     @Timed
-    public ResponseEntity sendStudy(@Valid @RequestBody Invitation inv) throws URISyntaxException {
+    public ResponseEntity<Object> sendStudy(@Valid @RequestBody Invitation inv) throws URISyntaxException {
         Study study = inv.getStudy();
         int delay = inv.getDelay()/1000;
         log.debug("REST request to send Study : {}"+ study + " with delay: "+ delay);
+
         if (study == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

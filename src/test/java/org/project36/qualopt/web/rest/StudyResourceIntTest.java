@@ -1,5 +1,18 @@
 package org.project36.qualopt.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.project36.qualopt.QualOptApp;
 import org.project36.qualopt.domain.Invitation;
+import org.project36.qualopt.domain.IncentiveType;
 import org.project36.qualopt.domain.Study;
 import org.project36.qualopt.repository.StudyRepository;
 import org.project36.qualopt.repository.UserRepository;
@@ -21,13 +35,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Test class for the StudyResource REST controller.
@@ -44,8 +51,11 @@ public class StudyResourceIntTest {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final String DEFAULT_INCENTIVE = "AAAAAAAAAA";
-    private static final String UPDATED_INCENTIVE = "BBBBBBBBBB";
+    private static final String DEFAULT_INCENTIVE_DETAIL = "AAAAAAAAAA";
+    private static final String UPDATED_INCENTIVE_DETAIL = "BBBBBBBBBB";
+
+    private static final IncentiveType DEFAULT_INCENTIVE_TYPE = IncentiveType.ONEOFFPAYMENT;
+    private static final IncentiveType UPDATED_INCENTIVE_TYPE = IncentiveType.RANDOMLYALLOCATED;
 
     private static final String DEFAULT_EMAIL_SUBJECT = "AAAAAAAAAA";
     private static final String UPDATED_EMAIL_SUBJECT = "BBBBBBBBBB";
@@ -100,7 +110,8 @@ public class StudyResourceIntTest {
         Study study = new Study()
             .name(DEFAULT_NAME)
             .description(DEFAULT_DESCRIPTION)
-            .incentive(DEFAULT_INCENTIVE)
+            .incentiveDetail(DEFAULT_INCENTIVE_DETAIL)
+            .incentiveType(DEFAULT_INCENTIVE_TYPE)
             .emailSubject(DEFAULT_EMAIL_SUBJECT)
             .emailBody(DEFAULT_EMAIL_BODY);
         return study;
@@ -234,7 +245,8 @@ public class StudyResourceIntTest {
             .andExpect(jsonPath("$.id").value(study.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.incentive").value(DEFAULT_INCENTIVE.toString()))
+            .andExpect(jsonPath("$.incentiveType").value(DEFAULT_INCENTIVE_TYPE.toString()))
+            .andExpect(jsonPath("$.incentiveDetail").value(DEFAULT_INCENTIVE_DETAIL.toString()))
             .andExpect(jsonPath("$.emailSubject").value(DEFAULT_EMAIL_SUBJECT.toString()))
             .andExpect(jsonPath("$.emailBody").value(DEFAULT_EMAIL_BODY.toString()));
     }
@@ -255,11 +267,12 @@ public class StudyResourceIntTest {
         int databaseSizeBeforeUpdate = studyRepository.findAll().size();
 
         // Update the study
-        Study updatedStudy = studyRepository.findOne(study.getId());
+        Study updatedStudy = studyRepository.getOne(study.getId());
         updatedStudy
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
-            .incentive(UPDATED_INCENTIVE)
+            .incentiveDetail(UPDATED_INCENTIVE_DETAIL)
+            .incentiveType(UPDATED_INCENTIVE_TYPE)
             .emailSubject(UPDATED_EMAIL_SUBJECT)
             .emailBody(UPDATED_EMAIL_BODY);
 
@@ -274,7 +287,8 @@ public class StudyResourceIntTest {
         Study testStudy = studyList.get(studyList.size() - 1);
         assertThat(testStudy.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testStudy.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testStudy.getIncentive()).isEqualTo(UPDATED_INCENTIVE);
+        assertThat(testStudy.getIncentiveDetail()).isEqualTo(UPDATED_INCENTIVE_DETAIL);
+        assertThat(testStudy.getIncentiveType()).isEqualTo(UPDATED_INCENTIVE_TYPE);
         assertThat(testStudy.getEmailSubject()).isEqualTo(UPDATED_EMAIL_SUBJECT);
         assertThat(testStudy.getEmailBody()).isEqualTo(UPDATED_EMAIL_BODY);
     }
